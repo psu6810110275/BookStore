@@ -10,6 +10,9 @@ export default function BookList(props) {
                     <td>{book.price}</td>
                     <td>{book.isbn}</td>
                     <td>{book.stock}</td>
+                    <td>
+                        <button onClick={() => alert(JSON.stringify(book))}>Debug</button>
+                    </td>
                 </tr>
             ))
         }
@@ -28,6 +31,7 @@ export default function BookList(props) {
                     <th>Price</th>
                     <th>ISBN</th>
                     <th>Stock</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>{generateRows()}</tbody>
