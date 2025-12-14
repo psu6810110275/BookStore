@@ -14,6 +14,9 @@ export default function BookList(props) {
                     <td>
                         <button onClick={() =>props.onLiked(book.id)}>Like</button>
                     </td>
+                    <td>
+                        <button onClick={() =>props.onDeleted(book.id)}>Delete</button>
+                    </td>
                 </tr>
             ))
         }

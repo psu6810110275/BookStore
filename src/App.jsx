@@ -35,6 +35,13 @@ function App() {
     ))
   }
 
+  const handleDeleted = (bookId) => {
+    setBookData(
+      bookData.filter(book => book.id != bookId)
+    )
+  }
+
+
   const handleAddBook = () => {
     //setBookData([...bookData,generateBook()])
     setBookData([...bookData,{title: title, price:price, stock:stock}])
@@ -79,7 +86,7 @@ function App() {
     {`Counter : ${counter}`}
     <button onClick={counterClicked}>Add Counter</button>
     <button onClick={handleAddBook}>New Book</button>
-    <BookList data={bookData} onLiked={handleLiked} />
+    <BookList data={bookData} onLiked={handleLiked} onDeleted={handleDeleted} />
     <div>
       <Clock/>
     </div>
