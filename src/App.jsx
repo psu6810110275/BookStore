@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -7,12 +7,34 @@ import Clock from './components/Clock'
 
 
 function App() {
-  const bookData = [
-{ id: 1, title: "Harry Potter", author: "J.K. Rowling", description: "Orphan Harry learns he is a wizard",
-price: 15.70, isbn: "978-1408825945", stock: 10 },
-{ id: 2, title: "Sapiens", author: "Yuval Noah Harari", description: "A brief history of humankind", price:
-22.99, isbn: "978-0062316097", stock: 50 },
-]
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [bookData, setBookData] = useState([
+    { id: 1, title: "Harry Potter", author: "J.K. Rowling", description: "Orphan Harry learns he is a wizard",
+      price: 15.70, isbn: "978-1408825945", stock: 10 },
+    { id: 2, title: "Sapiens", author: "Yuval Noah Harari", description: "A brief history of humankind", price:
+      22.99, isbn: "978-0062316097", stock: 50 },
+]);
+
+  const generateBook = () => {
+    const current = bookData.length + 1
+    return {
+      id: current,
+      title: `Dummy Book ${current}`,
+      author: `Unknown${current}`,
+      description: `Dummy Description ${current}`,
+      price: Math.floor(Math.floor(Math.random() * 20)),
+      stock: Math.floor(Math.floor(Math.random() * 50))
+      }
+  }
+
+  const handleAddBook = () => {
+    setBookData([...bookData,generateBook()])
+  }
+
+  useEffect (() =>{
+    setTotalAmount(bookData.reduce((total , book) => total += (book.price * book.stock),0))
+  }, [bookData])
+
 
  const bookCount = bookData.reduce( (total, book) => total += book.stock, 0);
  const positiveSummary = amount => <p style={{ 'color': 'green' }}>Wow we have so many book {amount} books</p>
@@ -24,13 +46,19 @@ price: 15.70, isbn: "978-1408825945", stock: 10 },
     setCounter(counter+1);
  }
 
+
+
+
+
   return (
   <>
     <h3>Book List</h3>
     {bookCount >= 50 && positiveSummary(bookCount)}
     {bookCount <50 && negativeSummary(bookCount)}
+    <h3>My books worth {totalAmount} dollars</h3>
     {`Counter : ${counter}`}
     <button onClick={counterClicked}>Add Counter</button>
+    <button onClick={handleAddBook}>New Book</button>
     <BookList data={bookData}/>
     <div>
       <Clock/>
