@@ -3,6 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import BookList from './components/BookList'
+import Clock from './components/Clock'
 
 
 function App() {
@@ -31,6 +32,9 @@ price: 15.70, isbn: "978-1408825945", stock: 10 },
     {`Counter : ${counter}`}
     <button onClick={counterClicked}>Add Counter</button>
     <BookList data={bookData}/>
+    <div>
+      <Clock/>
+    </div>
   </>
 );
 }
