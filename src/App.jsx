@@ -13,7 +13,7 @@ function App() {
       price: 15.70, isbn: "978-1408825945", stock: 10 },
     { id: 2, title: "Sapiens", author: "Yuval Noah Harari", description: "A brief history of humankind", price:
       22.99, isbn: "978-0062316097", stock: 50 },
-]);
+  ]);
 
   const generateBook = () => {
     const current = bookData.length + 1
@@ -28,23 +28,27 @@ function App() {
   }
 
   const handleAddBook = () => {
-    setBookData([...bookData,generateBook()])
+    //setBookData([...bookData,generateBook()])
+    setBookData([...bookData,{title: title, price:price, stock:stock}])
   }
 
   useEffect (() =>{
     setTotalAmount(bookData.reduce((total , book) => total += (book.price * book.stock),0))
   }, [bookData])
 
+  const [title, setTitle] = useState("")
+  const [price, setPrice] = useState(0)
+  const [stock, setStock] = useState(0)
 
- const bookCount = bookData.reduce( (total, book) => total += book.stock, 0);
- const positiveSummary = amount => <p style={{ 'color': 'green' }}>Wow we have so many book {amount} books</p>
- const negativeSummary = amount => <p style={{ 'color': 'red' }}>Boss low on stock... {amount} books</p>
+  const bookCount = bookData.reduce( (total, book) => total += book.stock, 0);
+  const positiveSummary = amount => <p style={{ 'color': 'green' }}>Wow we have so many book {amount} books</p>
+  const negativeSummary = amount => <p style={{ 'color': 'red' }}>Boss low on stock... {amount} books</p>
 
- const [counter, setCounter] = useState(0);
- const counterClicked = () => {
-    console.log("Clicked");
-    setCounter(counter+1);
- }
+  const [counter, setCounter] = useState(0);
+  const counterClicked = () => {
+      console.log("Clicked");
+      setCounter(counter+1);
+  }
 
 
 
@@ -56,6 +60,14 @@ function App() {
     {bookCount >= 50 && positiveSummary(bookCount)}
     {bookCount <50 && negativeSummary(bookCount)}
     <h3>My books worth {totalAmount} dollars</h3>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <label>Title : </label>
+      <input type='text' onChange={(evt) => setTitle(evt.target.value)}/>
+      <label>Price : </label>
+      <input type='number' onChange={(evt) => setPrice(evt.target.value)}/>
+      <label>Stock : </label>
+      <input type='number' onChange={(evt) => setStock(evt.target.value)}/>
+    </div>
     {`Counter : ${counter}`}
     <button onClick={counterClicked}>Add Counter</button>
     <button onClick={handleAddBook}>New Book</button>
