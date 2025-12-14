@@ -13,9 +13,15 @@ price: 15.70, isbn: "978-1408825945", stock: 10 },
 22.99, isbn: "978-0062316097", stock: 50 },
 ]
 
+ const bookCount = bookData.reduce( (total, book) => total += book.stock, 0);
+ const positiveSummary = amount => <p style={{ 'color': 'green' }}>Wow we have so many book {amount} books</p>
+ const negativeSummary = amount => <p style={{ 'color': 'red' }}>Boss low on stock... {amount} books</p>
+
   return (
   <>
     <h3>Book List</h3>
+    {bookCount >= 50 && positiveSummary(bookCount)}
+    {bookCount <50 && negativeSummary(bookCount)}
     <BookList data={bookData}/>
   </>
 );

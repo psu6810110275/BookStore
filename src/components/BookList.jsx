@@ -3,7 +3,7 @@ export default function BookList(props) {
     const generateRows = () => {
         if (props.data != null) {
             return props.data.map(book => (
-                <tr key={book.id}>
+                <tr key={book.id} bgcolor={book.stock >= 30 ? "green" : "red"}>
                     <td>{book.title}</td>
                     <td>{book.author}</td>
                     <td>{book.description}</td>
@@ -36,5 +36,6 @@ export default function BookList(props) {
             </thead>
             <tbody>{generateRows()}</tbody>
         </table>
+        
     )
 }
