@@ -3,8 +3,9 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import BookList from './components/BookList'
-import Clock from './components/Clock'
-
+import Clock from './components/Clock';
+import { Button } from 'antd'
+import AddBook from './components/AddBook';
 
 function App() {
   const [totalAmount, setTotalAmount] = useState(0);
@@ -74,18 +75,11 @@ function App() {
     <h3>Book List</h3>
     {bookCount >= 50 && positiveSummary(bookCount)}
     {bookCount <50 && negativeSummary(bookCount)}
+    <AddBook onBookAdded={ book => {
+      setBookData([...bookData, book])
+    }}/>
     <h3>My books worth {totalAmount} dollars</h3>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <label>Title : </label>
-      <input type='text' onChange={(evt) => setTitle(evt.target.value)}/>
-      <label>Price : </label>
-      <input type='number' onChange={(evt) => setPrice(evt.target.value)}/>
-      <label>Stock : </label>
-      <input type='number' onChange={(evt) => setStock(evt.target.value)}/>
-    </div>
     {`Counter : ${counter}`}
-    <button onClick={counterClicked}>Add Counter</button>
-    <button onClick={handleAddBook}>New Book</button>
     <BookList data={bookData} onLiked={handleLiked} onDeleted={handleDeleted} />
     <div>
       <Clock/>
