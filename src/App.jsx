@@ -17,11 +17,19 @@ price: 15.70, isbn: "978-1408825945", stock: 10 },
  const positiveSummary = amount => <p style={{ 'color': 'green' }}>Wow we have so many book {amount} books</p>
  const negativeSummary = amount => <p style={{ 'color': 'red' }}>Boss low on stock... {amount} books</p>
 
+ const [counter, setCounter] = useState(0);
+ const counterClicked = () => {
+    console.log("Clicked");
+    setCounter(counter+1);
+ }
+
   return (
   <>
     <h3>Book List</h3>
     {bookCount >= 50 && positiveSummary(bookCount)}
     {bookCount <50 && negativeSummary(bookCount)}
+    {`Counter : ${counter}`}
+    <button onClick={counterClicked}>Add Counter</button>
     <BookList data={bookData}/>
   </>
 );
