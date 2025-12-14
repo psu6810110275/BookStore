@@ -10,9 +10,9 @@ function App() {
   const [totalAmount, setTotalAmount] = useState(0);
   const [bookData, setBookData] = useState([
     { id: 1, title: "Harry Potter", author: "J.K. Rowling", description: "Orphan Harry learns he is a wizard",
-      price: 15.70, isbn: "978-1408825945", stock: 10 },
+      price: 15.70, isbn: "978-1408825945", stock: 10 ,likeCount : 10 },
     { id: 2, title: "Sapiens", author: "Yuval Noah Harari", description: "A brief history of humankind", price:
-      22.99, isbn: "978-0062316097", stock: 50 },
+      22.99, isbn: "978-0062316097", stock: 50 ,likeCount : 7 },
   ]);
 
   const generateBook = () => {
@@ -25,6 +25,14 @@ function App() {
       price: Math.floor(Math.floor(Math.random() * 20)),
       stock: Math.floor(Math.floor(Math.random() * 50))
       }
+  }
+
+  const handleLiked = (bookId) => {
+    setBookData(
+      bookData.map(book => {
+        return book.id === bookId ? { ...book, likeCount: book.likeCount + 1 } : book
+      }
+    ))
   }
 
   const handleAddBook = () => {
@@ -71,7 +79,7 @@ function App() {
     {`Counter : ${counter}`}
     <button onClick={counterClicked}>Add Counter</button>
     <button onClick={handleAddBook}>New Book</button>
-    <BookList data={bookData}/>
+    <BookList data={bookData} onLiked={handleLiked} />
     <div>
       <Clock/>
     </div>

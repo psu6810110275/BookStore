@@ -10,8 +10,9 @@ export default function BookList(props) {
                     <td>{book.price}</td>
                     <td>{book.isbn}</td>
                     <td>{book.stock}</td>
+                    <td>{book.likeCount}</td>
                     <td>
-                        <button onClick={() => alert(JSON.stringify(book))}>Debug</button>
+                        <button onClick={() =>props.onLiked(book.id)}>Like</button>
                     </td>
                 </tr>
             ))
@@ -31,6 +32,7 @@ export default function BookList(props) {
                     <th>Price</th>
                     <th>ISBN</th>
                     <th>Stock</th>
+                    <th>Liked</th>
                     <th>Action</th>
                 </tr>
             </thead>
