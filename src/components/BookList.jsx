@@ -60,6 +60,12 @@ export default function BookList(props) {
              Like ({record.likeCount || 0})
           </Button>
           
+          {/* ✅ เพิ่มปุ่ม Edit ตรงนี้ */}
+          {/* ส่ง record ไปทั้งหมด เพื่อเอาไป set ลง Form */}
+          <Button onClick={() => props.onEdit(record)}>
+            Edit
+          </Button>
+
           <Popconfirm
             title="Delete the book"
             description="Are you sure to delete this book?"
