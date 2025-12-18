@@ -1,122 +1,117 @@
 import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import BookList from './components/BookList'
 import Clock from './components/Clock';
-import { Button } from 'antd'
 import AddBook from './components/AddBook';
 import axios from 'axios'
-import { Divider, Spin } from 'antd';
-
+import { Divider, Spin, message } from 'antd';
 
 axios.defaults.baseURL = "http://localhost:3000"
 const URL_BOOK = "/api/book"
-
 
 function App() {
   const [totalAmount, setTotalAmount] = useState(0);
   const [bookData, setBookData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-
-  //เพิ่ม function สำหรับดึงข้อมูล
+  // 1. ดึงข้อมูล (GET) - ✅ ถูกต้อง
   const fetchBooks = async () => {
-    setLoading(true); // เริ่มโหลด หมุนติ้วๆ
+    setLoading(true);
     try {
       const response = await axios.get(URL_BOOK);
-      // นำข้อมูลที่ได้จาก Server ใส่เข้าไปใน State
       setBookData(response.data); 
     } catch (err) {
       console.log(err);
     } finally {
-      setLoading(false); // โหลดเสร็จแล้ว หยุดหมุน
+      setLoading(false);
     }
   }
 
-   //เรียกfunction เมื่อหน้าload web ครั้งแรก
   useEffect(() => {
     fetchBooks();
-  }, []); // ใส่ [] เพื่อให้ทำงานแค่ครั้งแรกครั้งเดียว
+  }, []);
 
-  // ... (ฟังก์ชัน handleLiked, handleDeleted, อื่นๆ ของเดิมเก็บไว้ได้)
-  
-  // ... (ส่วน useEffect คำนวณ totalAmount ของเดิมเก็บไว้ได้)
-
-
-  const generateBook = () => {
-    const current = bookData.length + 1
-    return {
-      id: current,
-      title: `Dummy Book ${current}`,
-      author: `Unknown${current}`,
-      description: `Dummy Description ${current}`,
-      price: Math.floor(Math.floor(Math.random() * 20)),
-      stock: Math.floor(Math.floor(Math.random() * 50))
-      }
+  // 2. เพิ่มหนังสือ (POST) - ✅ ถูกต้อง
+  const handleAddBook = async (book) => {
+    try {
+      setLoading(true);
+      const response = await axios.post(URL_BOOK, book);
+      setBookData([...bookData, response.data]);
+      message.success("เพิ่มหนังสือสำเร็จ!");
+    } catch (err) {
+      console.error("Error creating book:", err);
+      message.error("เกิดข้อผิดพลาดในการบันทึก");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  const handleLiked = (bookId) => {
-    setBookData(
-      bookData.map(book => {
-        return book.id === bookId ? { ...book, likeCount: book.likeCount + 1 } : book
-      }
-    ))
+  // 3. กด Like (POST) - ✅ ถูกต้อง
+  const handleLikeBook = async (bookId) => {
+    try {
+      const response = await axios.post(`${URL_BOOK}/${bookId}/like`);
+      setBookData(prevData => 
+        prevData.map(book => 
+          book.id === bookId ? response.data : book
+        )
+      );
+    } catch (err) {
+      console.error("Error liking book:", err);
+    }
   }
 
-  const handleDeleted = (bookId) => {
-    setBookData(
-      bookData.filter(book => book.id != bookId)
-    )
-  }
-
-
-  const handleAddBook = () => {
-    //setBookData([...bookData,generateBook()])
-    setBookData([...bookData,{title: title, price:price, stock:stock}])
+  // 4. ❌ ลบหนังสือ (DELETE) - ⚠️ ต้องแก้ตรงนี้ครับ!
+  // จากเดิม: const handleDeleted = (bookId) => { ... }
+  // แก้เป็นแบบนี้ครับ:
+  const handleDeleteBook = async (bookId) => {
+    try {
+      setLoading(true);
+      // ยิง API สั่งลบที่ Server: DELETE /api/book/:id
+      await axios.delete(`${URL_BOOK}/${bookId}`);
+      
+      // ถ้าลบสำเร็จ ให้ลบออกจาก State หน้าจอด้วย
+      setBookData(prevData => prevData.filter(book => book.id !== bookId));
+      message.success("ลบหนังสือเรียบร้อย");
+    } catch (err) {
+      console.error("Error deleting book:", err);
+      message.error("ไม่สามารถลบหนังสือได้");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect (() =>{
     setTotalAmount(bookData.reduce((total , book) => total += (book.price * book.stock),0))
   }, [bookData])
 
-
-  const [title, setTitle] = useState("")
-  const [price, setPrice] = useState(0)
-  const [stock, setStock] = useState(0)
-
   const bookCount = bookData.reduce( (total, book) => total += book.stock, 0);
-  const positiveSummary = amount => <p style={{ 'color': 'green' }}>Wow we have so many book {amount} books</p>
-  const negativeSummary = amount => <p style={{ 'color': 'red' }}>Boss low on stock... {amount} books</p>
-
-  const [counter, setCounter] = useState(0);
-  const counterClicked = () => {
-      console.log("Clicked");
-      setCounter(counter+1);
-  }
-
-
-
-
 
   return (
-  <>
-    <h3>Book List</h3>
-    {bookCount >= 50 && positiveSummary(bookCount)}
-    {bookCount <50 && negativeSummary(bookCount)}
-    <AddBook onBookAdded={ book => {
-      setBookData([...bookData, book])
-    }}/>
-    <h3>My books worth {totalAmount} dollars</h3>
-    {`Counter : ${counter}`}
-    <Spin spinning={loading}>
-    <BookList data={bookData} onLiked={handleLiked} onDeleted={handleDeleted} />
-    </Spin>
-    <div>
-      <Clock/>
-    </div>
-  </>
-);
+    <>
+      <h3>Book List</h3>
+      
+      {bookCount >= 50 && <p style={{ 'color': 'green' }}>Wow we have so many book {bookCount} books</p>}
+      {bookCount < 50 && <p style={{ 'color': 'red' }}>Boss low on stock... {bookCount} books</p>}
+      
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: "2em" }}>
+        <AddBook onBookAdded={handleAddBook}/>
+      </div>
+
+      <Divider>My Books List</Divider>
+      
+      <h3>My books worth {totalAmount} dollars</h3>
+      
+      <Spin spinning={loading}>
+        <BookList 
+          data={bookData} 
+          onLiked={handleLikeBook} 
+          onDeleted={handleDeleteBook}  // ✅ อย่าลืมเปลี่ยนชื่อ function ตรงนี้ให้ตรงกับข้างบน
+        />
+      </Spin>
+      
+      <div><Clock/></div>
+    </>
+  );
 }
 
 export default App
