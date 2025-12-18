@@ -6,15 +6,43 @@ import BookList from './components/BookList'
 import Clock from './components/Clock';
 import { Button } from 'antd'
 import AddBook from './components/AddBook';
+import axios from 'axios'
+import { Divider, Spin } from 'antd';
+
+
+axios.defaults.baseURL = "http://localhost:3000"
+const URL_BOOK = "/api/book"
+
 
 function App() {
   const [totalAmount, setTotalAmount] = useState(0);
-  const [bookData, setBookData] = useState([
-    { id: 1, title: "Harry Potter", author: "J.K. Rowling", description: "Orphan Harry learns he is a wizard",
-      price: 15.70, isbn: "978-1408825945", stock: 10 ,likeCount : 10 },
-    { id: 2, title: "Sapiens", author: "Yuval Noah Harari", description: "A brief history of humankind", price:
-      22.99, isbn: "978-0062316097", stock: 50 ,likeCount : 7 },
-  ]);
+  const [bookData, setBookData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+
+  //เพิ่ม function สำหรับดึงข้อมูล
+  const fetchBooks = async () => {
+    setLoading(true); // เริ่มโหลด หมุนติ้วๆ
+    try {
+      const response = await axios.get(URL_BOOK);
+      // นำข้อมูลที่ได้จาก Server ใส่เข้าไปใน State
+      setBookData(response.data); 
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false); // โหลดเสร็จแล้ว หยุดหมุน
+    }
+  }
+
+   //เรียกfunction เมื่อหน้าload web ครั้งแรก
+  useEffect(() => {
+    fetchBooks();
+  }, []); // ใส่ [] เพื่อให้ทำงานแค่ครั้งแรกครั้งเดียว
+
+  // ... (ฟังก์ชัน handleLiked, handleDeleted, อื่นๆ ของเดิมเก็บไว้ได้)
+  
+  // ... (ส่วน useEffect คำนวณ totalAmount ของเดิมเก็บไว้ได้)
+
 
   const generateBook = () => {
     const current = bookData.length + 1
@@ -52,6 +80,7 @@ function App() {
     setTotalAmount(bookData.reduce((total , book) => total += (book.price * book.stock),0))
   }, [bookData])
 
+
   const [title, setTitle] = useState("")
   const [price, setPrice] = useState(0)
   const [stock, setStock] = useState(0)
@@ -80,7 +109,9 @@ function App() {
     }}/>
     <h3>My books worth {totalAmount} dollars</h3>
     {`Counter : ${counter}`}
+    <Spin spinning={loading}>
     <BookList data={bookData} onLiked={handleLiked} onDeleted={handleDeleted} />
+    </Spin>
     <div>
       <Clock/>
     </div>
